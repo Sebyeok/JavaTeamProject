@@ -1,4 +1,4 @@
-
+package javaapplication30;
 
 import java.util.Scanner;
 import java.applet.*;
@@ -13,7 +13,8 @@ import java.net.*;
 
 class number{
 	  public  static int count=0;
-	  public  static int enemy=0;}
+	  public  static int enemy=0;
+	  public  static int point=0;}
 
 class Ex5 extends JFrame{
     Ex5(){
@@ -33,14 +34,24 @@ class Ex5 extends JFrame{
 
 class GamePanel extends JPanel {
 	
+	GamePanel k;
 	number num = new number();
 	TargetThread[] targetThread = new TargetThread[num.enemy];
-    TargetThread targetThread2;
+    TargetThread2 targetThread2;
+    TargetThread3 targetThread3;
+    TargetThread4 targetThread4;
+    JLabel pointshow=new JLabel();
+    JTextField ioField=new JTextField();
     JLabel base = new JLabel();
     JLabel bullet = new JLabel();
     JLabel[] target = new JLabel[num.enemy];
     JLabel target2;
-    
+    JLabel target3;
+    JLabel target4;
+    ImageIcon img;
+    ImageIcon img2;
+    ImageIcon img3;
+    ImageIcon img4;
     //AudioClip sound;
     GamePanel()
     {
@@ -49,8 +60,10 @@ class GamePanel extends JPanel {
         base.setOpaque(true);
         base.setBackground(Color.black);
         
-        ImageIcon img = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\기본병사.png");
-        ImageIcon img2 = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\고위직병사.png");
+        img = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\기본병사.png");
+        img2 = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\고위직병사.png");
+        img3 = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\해골.png");
+        img4 = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\방사능.png");
         for(int i=0;i<targetThread.length;i++)
         {
         	 target[i] = new JLabel(img);
@@ -60,15 +73,30 @@ class GamePanel extends JPanel {
       
         
         target2 = new JLabel(img2);
+        target3 = new JLabel(img3);
+        target4 = new JLabel(img4);
         //이미지 크기만큼 레이블 크기 설정
-     
         target2.setSize(img2.getIconWidth(),img2.getIconHeight());
+      //  System.out.println(""+img2.getIconWidth()+"  "+img2.getIconHeight());
+        // 확인결과 크기 96 96
+        this.add(target2);
+        
+        target3.setSize(img3.getIconWidth(),img3.getIconHeight());
+        
+        this.add(target3);
+        
+        target4.setSize(img4.getIconWidth(),img4.getIconHeight());
+        pointshow.setSize(100,50);
+        //ioField.setSize(50,50);
+        this.add(target4);
+        this.add(pointshow);
+        //this.add(ioField);
+        
+      
         bullet.setSize(10,10);
         bullet.setOpaque(true);
         bullet.setBackground(Color.red);
         this.add(base);
-     
-        this.add(target2);
         this.add(bullet);
         
         //URL url = Ex5.class.getResource("LASER.wav");
@@ -83,8 +111,11 @@ class GamePanel extends JPanel {
         {
         	target[i].setLocation(0, 0);
         }
-       
-        target2.setLocation(0, 0);
+        target2.setLocation(-96, -96);
+        target3.setLocation(-96, -96);
+        target4.setLocation(-96, -96);
+        pointshow.setLocation(350,0);
+        //ioField.setLocation(400,0);
         //타겟을 움직이는 스레드
         
         
@@ -93,8 +124,18 @@ class GamePanel extends JPanel {
         	targetThread[i] = new TargetThread(target[i]);
         	targetThread[i].start();
         }
-        targetThread2 = new TargetThread(target2);
-        targetThread2.start();
+        
+        
+         targetThread2 = new TargetThread2(target2);
+    		//targetThread2.start();
+    	
+        targetThread3 = new TargetThread3(target3);
+    		//targetThread3.start();
+    	
+        targetThread4 = new TargetThread4(target4);
+    		//targetThread4.start();
+    
+        
         
         //베이스에 초점을 두고 엔터키 입력에 따라 bullet스레드 실행
         base.requestFocus();
@@ -122,7 +163,17 @@ class GamePanel extends JPanel {
             
         });
     }
-
+    /*public void startGame2(){
+    	if(num.count==2)
+        { targetThread2 = new TargetThread2(target2);
+    		targetThread2.start();}
+    	if(num.count==2)
+        { targetThread3 = new TargetThread3(target3);
+    		targetThread3.start();}
+    	if(num.count==2)
+        { targetThread4 = new TargetThread4(target4);
+    		targetThread4.start();}
+    }*/
     
     class TargetThread extends Thread{
         JLabel target;
@@ -147,13 +198,16 @@ class GamePanel extends JPanel {
             	  	a = (int) Math.floor(Math.random() * 9);
             	  	}
             	*/
-            	if(num.count>=2)
+            	if(num.count>=4)
             	{
-            		d =100;
+            		if(num.count>=6)
+            		{d=10;}
+            		else
+            		{d=15;}
             	}
                 int x=target.getX()+a;//5픽셀씩 이동
                 int y=target.getY();
-                if(num.count>=4)
+                if(num.count>=2)
                 {y=target.getY()+b;}                
                 //프레임 밖으로 나갈경우
                 if(x>GamePanel.this.getWidth())
@@ -198,7 +252,285 @@ class GamePanel extends JPanel {
                 //스레드가 죽게되면 초기 위치에 위치하고, 0.5초를 기다린다.
                 catch(Exception e){
                     target.setLocation(5, y);
-                    num.count++;
+                    num.point++;
+                	num.count++;
+                    pointshow.setText("점수:"+num.point);
+                    try{
+                        sleep(500);
+                    }
+                    catch(Exception e2){}
+                }
+            }
+        }
+    }
+    
+    class TargetThread2 extends Thread{
+    
+    	JLabel target;
+        int d=20;
+       
+        int xx;
+        int yy;
+        
+        
+        TargetThread2(JLabel target){
+        
+        	int xx = (int) Math.floor(Math.random() * 800);
+        	int yy = (int) Math.floor(Math.random() * 600);
+            this.target=target;
+            if(num.count==2) {target.setLocation(xx, yy);}
+        	
+        }
+        
+        public void run(){
+        	 {
+        	int a=5;
+        	int b=5;
+        	int d=15;
+            while(true){
+            	/*	
+            	    if(c.count==6)
+            	  	{
+            	  	a = (int) Math.floor(Math.random() * 9);
+            	  	}
+            	*/
+            	if(num.count>=4)
+            	{
+            		if(num.count>=6)
+            		{d=5;}
+            		else
+            		{d=10;}
+            	}
+                int x=target.getX()+a;//5픽셀씩 이동
+                int y=target.getY();
+                if(num.count>=2)
+                {y=target.getY()+b;}                
+                //프레임 밖으로 나갈경우
+                if(x>GamePanel.this.getWidth())
+                	{
+                	a=-5;
+                    target.setLocation(GamePanel.this.getWidth(), y);
+                    }
+                //프레임 안에 있을경우 5픽셀씩 이동
+                else
+                    target.setLocation(x, y);
+                
+                if(x<0)
+            	{
+                	a=5;
+                target.setLocation(5, y);}
+                else
+                    target.setLocation(x, y);
+//////////////////////////////////////////////////////////////////////////////////////
+                
+                if(y>600)
+            	{
+            	b=-5;
+                target.setLocation(x, 600);
+                }
+            //프레임 안에 있을경우 5픽셀씩 이동
+            else
+                target.setLocation(x, y);
+            
+            if(y<0)
+        	{
+            	b=5;
+            target.setLocation(x, 0);}
+            else
+                target.setLocation(x, y);
+            
+            
+////////////////////////////////////////////////////////////////////////////////////
+                //0.02초마다 이동
+                try{
+                    sleep(d);
+                }
+                //스레드가 죽게되면 초기 위치에 위치하고, 0.5초를 기다린다.
+                catch(Exception e){
+                    target.setLocation(5, y);
+                    num.point+=5;
+                	num.count++;
+                    pointshow.setText("점수:"+num.point);
+                    try{
+                        sleep(500);
+                    }
+                    catch(Exception e2){}
+                }
+            }
+        }
+        }
+        
+    }
+    
+    class TargetThread3 extends Thread{
+        JLabel target;
+        int d=20;
+       
+        int xx;
+        int yy;
+        TargetThread3(JLabel target){
+        	int xx = (int) Math.floor(Math.random() * 800);
+        	int yy = (int) Math.floor(Math.random() * 600);
+            this.target=target;
+            if(num.count==6) {target.setLocation(xx, yy);}
+        }
+        public void run(){
+        	int a=50;
+        	int b=50;
+        	int d=50;
+            while(true){
+            	/*	
+            	    if(c.count==6)
+            	  	{
+            	  	a = (int) Math.floor(Math.random() * 9);
+            	  	}
+            	*/
+            	/*if(num.count>=4)
+            	{
+            		if(num.count>=6)
+            		{d=5;}
+            		else
+            		{d=10;}
+            	}*/
+                int x=target.getX()+a;//5픽셀씩 이동
+                int y=target.getY();
+                if(num.count>=2)
+                {y=target.getY()+b;}                
+                //프레임 밖으로 나갈경우
+                if(x>GamePanel.this.getWidth())
+                	{
+                	a=-a;
+                    target.setLocation(GamePanel.this.getWidth(), y);
+                    }
+                //프레임 안에 있을경우 5픽셀씩 이동
+                else
+                    target.setLocation(x, y);
+                
+                if(x<0)
+            	{
+                	a=a;
+                target.setLocation(5, y);}
+                else
+                    target.setLocation(x, y);
+//////////////////////////////////////////////////////////////////////////////////////
+                
+                if(y>600)
+            	{
+            	b=-b;
+                target.setLocation(x, 600);
+                }
+            //프레임 안에 있을경우 5픽셀씩 이동
+            else
+                target.setLocation(x, y);
+            
+            if(y<0)
+        	{
+            	b=b;
+            target.setLocation(x, 0);}
+            else
+                target.setLocation(x, y);
+            
+            
+////////////////////////////////////////////////////////////////////////////////////
+                //0.02초마다 이동
+                try{
+                    sleep(d);
+                }
+                //스레드가 죽게되면 초기 위치에 위치하고, 0.5초를 기다린다.
+                catch(Exception e){
+                    target.setLocation(5, y);
+                    num.point+=100;
+                	num.count++;
+                    pointshow.setText("점수:"+num.point);
+                    try{
+                        sleep(500);
+                    }
+                    catch(Exception e2){}
+                }
+            }
+        }
+    }
+    
+    class TargetThread4 extends Thread{
+        JLabel target;
+        int d=20;
+       
+        int xx;
+        int yy;
+        TargetThread4(JLabel target){
+        	int xx = (int) Math.floor(Math.random() * 800);
+        	int yy = (int) Math.floor(Math.random() * 600);
+            this.target=target;
+            if(num.count==4) {target.setLocation(xx, yy);}
+        }
+        public void run(){
+        	int a=5;
+        	int b=5;
+        	int d=20;
+            while(true){
+            	/*	
+            	    if(c.count==6)
+            	  	{
+            	  	a = (int) Math.floor(Math.random() * 9);
+            	  	}
+            	*/
+            	/*if(num.count>=4)
+            	{
+            		if(num.count>=6)
+            		{d=5;}
+            		else
+            		{d=10;}
+            	}*/
+                int x=target.getX()+a;//5픽셀씩 이동
+                int y=target.getY();
+                if(num.count>=2)
+                {y=target.getY()+b;}                
+                //프레임 밖으로 나갈경우
+                if(x>GamePanel.this.getWidth())
+                	{
+                	a=-5;
+                    target.setLocation(GamePanel.this.getWidth(), y);
+                    }
+                //프레임 안에 있을경우 5픽셀씩 이동
+                else
+                    target.setLocation(x, y);
+                
+                if(x<0)
+            	{
+                	a=5;
+                target.setLocation(5, y);}
+                else
+                    target.setLocation(x, y);
+//////////////////////////////////////////////////////////////////////////////////////
+                
+                if(y>600)
+            	{
+            	b=-5;
+                target.setLocation(x, 600);
+                }
+            //프레임 안에 있을경우 5픽셀씩 이동
+            else
+                target.setLocation(x, y);
+            
+            if(y<0)
+        	{
+            	b=5;
+            target.setLocation(x, 0);}
+            else
+                target.setLocation(x, y);
+            
+            
+////////////////////////////////////////////////////////////////////////////////////
+                //0.02초마다 이동
+                try{
+                    sleep(d);
+                }
+                //스레드가 죽게되면 초기 위치에 위치하고, 0.5초를 기다린다.
+                catch(Exception e){
+                    target.setLocation(5, y);
+                    num.point-=10;
+                	num.count++;
+                    pointshow.setText("점수:"+num.point);
                     try{
                         sleep(500);
                     }
@@ -210,8 +542,8 @@ class GamePanel extends JPanel {
 
     class BulletThread extends Thread {
         JLabel bullet;
-        JLabel[] target;
-        Thread[] targetThread;
+        JLabel[] target= new JLabel[num.enemy];
+        Thread[] targetThread= new Thread[num.enemy];
         
         int attack=0;
         
@@ -226,13 +558,26 @@ class GamePanel extends JPanel {
             }
         }
     
-        
+        public void startGame2(){
+        	if(num.count==2)
+            {targetThread2.start();}
+        	
+        	if(num.count==6)
+            {targetThread3.start();}
+        	
+        	if(num.count==4)
+            {targetThread4.start();}
+        }
         public void run(){
             while(true){
                 if(hit()){//타겟이 맞았다면
                     targetThread[attack].interrupt();//타겟 스레드를 죽인다.
                     //총알은 원래 위치로 이동
+                    startGame2();
+                
+                    //ioField.setText("점수:"+num.point);
                     bullet.setLocation(bullet.getParent().getWidth()/2-5, bullet.getParent().getHeight()-50);
+                  
                     return;//총알 스레드도 죽인다.
                 }
                 else{
@@ -281,6 +626,8 @@ class GamePanel extends JPanel {
                     //타겟의 y좌표가 총알 y좌표보다 작거나 같으며 총알 y좌표보다 타겟 y좌표 + 타겟의 세로 길이가 크면
                     &&((target[i].getY()<=y)&&(y<target[i].getY()+target[i].getHeight())))
             {
+            	
+            	
             	int attack=i;
             	return true;
             	
@@ -301,11 +648,12 @@ class GamePanel extends JPanel {
         
 
         public class gametest extends number{
-            public void main(String[] args) {
+            public static void main(String[] args) {
             	
             
             	
             	 Scanner scan = new Scanner(System.in); 
+            	 System.out.println("적의 숫자를 입력해주시요");
             	 int num = scan.nextInt(); 
             	 enemy = num;
                 new Ex5();
