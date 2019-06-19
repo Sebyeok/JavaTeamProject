@@ -6,13 +6,44 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.GridLayout;
+import java.awt.Color;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JMenuBar;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 import java.net.*;
 
 class number{
-	  public  static int count=0;
-	  public  static int enemy=0;
-	  public  static int point=0;}
+	public  static int count;
+	  public  static int enemy;
+	  public  static int point;
+	  public  static int e;
+	
+	  public static int timelimit;
+	number(int c){
+		  if(c==0)
+		  {enemy=6;
+		  e=1;
+		  timelimit=60;
+		  }
+		  if(c==1)
+		  {enemy=4;
+		  e=2;
+		  timelimit=40;
+		  }
+		  if(c==2)
+		  {enemy=2;
+		  e=3;
+		  timelimit=20;
+		  }
+	
+	}
+	  }
 
 class Ex5 extends JFrame{
     Ex5(){
@@ -46,9 +77,9 @@ class GamePanel extends JPanel implements KeyListener{
     JLabel base = new JLabel();
     JLabel bullet = new JLabel();
     JLabel[] target = new JLabel[num.enemy];
-    JLabel target2;
-    JLabel target3;
-    JLabel target4;
+    JLabel target2 = new JLabel();
+    JLabel target3= new JLabel();
+    JLabel target4= new JLabel();
     ImageIcon img;
     ImageIcon img2;
     ImageIcon img3;
@@ -69,10 +100,10 @@ class GamePanel extends JPanel implements KeyListener{
         base.requestFocus();
 		base.addKeyListener(this);
         
-        img = new ImageIcon("./기본병사.png");
-        img2 = new ImageIcon("./고위직병사.png");
-        img3 = new ImageIcon("./해골.png");
-        img4 = new ImageIcon("./사능.png");
+        img = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\기본병사.png");
+        img2 = new ImageIcon("C:\\\\Users\\\\ekc14\\\\eclipse-workspace\\\\java project\\\\src\\\\javaapplication30\\\\고위직병사.png");
+        img3 = new ImageIcon("C:\\\\Users\\\\ekc14\\\\eclipse-workspace\\\\java project\\\\src\\\\javaapplication30\\\\해골.png");
+        img4 = new ImageIcon("C:\\\\Users\\\\ekc14\\\\eclipse-workspace\\\\java project\\\\src\\\\javaapplication30\\\\방사능.png");
         for(int i=0;i<targetThread.length;i++)
         {
         	 target[i] = new JLabel(img);
@@ -96,11 +127,11 @@ class GamePanel extends JPanel implements KeyListener{
         
         target4.setSize(img4.getIconWidth(),img4.getIconHeight());
        
-        
+        this.add(target4);
         pointshow.setSize(100,50);
         time.setSize(100,50);
         //ioField.setSize(50,50);
-        this.add(target4);
+        
         this.add(pointshow);
         this.add(time);
         //this.add(ioField);
@@ -185,9 +216,9 @@ class GamePanel extends JPanel implements KeyListener{
     }*/
    class TimeThread extends Thread{
 		
-		int timelimit;
+		
 		public TimeThread(){
-			timelimit=60;
+			timelimit=num.timelimit;
 		}
 		public void run() {
 			while(true) {
@@ -306,6 +337,7 @@ class GamePanel extends JPanel implements KeyListener{
                 catch(Exception e){
                     target.setLocation(5, y);
                     num.point++;
+                    timelimit+=6/num.e;
                 	num.count++;
                     pointshow.setText("점수:"+num.point);
                     try{
@@ -402,6 +434,7 @@ class GamePanel extends JPanel implements KeyListener{
                 catch(Exception e){
                     target.setLocation(5, y);
                     num.point+=5;
+                    timelimit-=10;
                 	num.count++;
                     pointshow.setText("점수:"+num.point);
                     try{
@@ -582,6 +615,7 @@ class GamePanel extends JPanel implements KeyListener{
                 catch(Exception e){
                     target.setLocation(5, y);
                     num.point-=10;
+                    timelimit=0;
                 	num.count++;
                     pointshow.setText("점수:"+num.point);
                     try{
@@ -600,10 +634,12 @@ class GamePanel extends JPanel implements KeyListener{
         JLabel target4 = new JLabel();
         JLabel[] target= new JLabel[num.enemy];
         Thread[] targetThread= new Thread[num.enemy];
-        
+        Thread targetThread2 =new Thread();
+        Thread targetThread3 =new Thread();
+        Thread targetThread4 =new Thread();
         int attack=0;
         
-        public BulletThread(JLabel bullet, JLabel[] target, Thread[] targetThread ,Thread targetThread2, Thread targetThread3, Thread targetThread4){
+        public BulletThread(JLabel bullet, JLabel[] target, JLabel target2,JLabel target3,JLabel target4,Thread[] targetThread ,Thread targetThread2, Thread targetThread3, Thread targetThread4){
         	int a=0;
             this.bullet=bullet;
             
@@ -612,6 +648,9 @@ class GamePanel extends JPanel implements KeyListener{
             this.target[i]=target[i];
             this.targetThread[i]=targetThread[i];
             }
+            this.targetThread2=targetThread2;
+            this.targetThread3=targetThread3;
+            this.targetThread4=targetThread4;
             this.target2=target2;
             this.target3=target3;
             this.target4=target4;
@@ -639,11 +678,11 @@ class GamePanel extends JPanel implements KeyListener{
                 	{
                 	targetThread2.interrupt();
                 	}
-                	if(attack==num.enemy)
+                	if(attack==num.enemy+1)
                 	{
                 	targetThread3.interrupt();
                 	}
-                	if(attack==num.enemy)
+                	if(attack==num.enemy+2)
                 	{
                 	targetThread4.interrupt();
                 	}
@@ -704,7 +743,7 @@ class GamePanel extends JPanel implements KeyListener{
                     &&((target2.getY()<=y)&&(y<target2.getY()+target2.getHeight())))
             {
             	
-            	int attack=num.enemy;
+            	attack=num.enemy;
             	return true;
             	
             }
@@ -713,7 +752,7 @@ class GamePanel extends JPanel implements KeyListener{
                         &&((target3.getY()<=y)&&(y<target3.getY()+target3.getHeight())))
             	{
                 	
-                	int attack=num.enemy+1;
+                	attack=num.enemy+1;
                 	return true;
                 	
                 }
@@ -722,7 +761,7 @@ class GamePanel extends JPanel implements KeyListener{
                             &&((target4.getY()<=y)&&(y<target4.getY()+target4.getHeight())))
             		 {
                     	
-                    	int attack=num.enemy+2;
+                    	attack=num.enemy+2;
                     	return true;
                     	
                     }
@@ -734,7 +773,7 @@ class GamePanel extends JPanel implements KeyListener{
             {
             	
             
-            	int attack=i;
+            	attack=i;
             	return true;
             	
             }
@@ -785,7 +824,7 @@ class GamePanel extends JPanel implements KeyListener{
 		{
 			if(bulletThread == null || !bulletThread.isAlive())
 			{
-				bulletThread = new BulletThread(bullet,target,targetThread,targetThread2,targetThread3,targetThread4);
+				bulletThread = new BulletThread(bullet,target,target2,target3,target4,targetThread,targetThread2,targetThread3,targetThread4);
 				bulletThread.start();
 			}
 		}
@@ -816,12 +855,13 @@ class GamePanel extends JPanel implements KeyListener{
 
         
 
-        public class gametest extends number{
-            public static void main(String[] args) {
-            	
-            
-            	 enemy = 4;
-                new Ex5();
-            }
-        }
+public class gametest extends number{
+    public static void main(String[] args) {
+    	
+    
+    	
+    	
+        new Ex5();
+    }
+}
             
