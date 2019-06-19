@@ -7,7 +7,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-
+import javaapplication30.Shoot_Game.BaseThread;
+import javaapplication30.Shoot_Game.BulletThread;
 
 import java.net.*;
 
@@ -32,7 +33,7 @@ class Ex5 extends JFrame{
     }
 }
 
-class GamePanel extends JPanel {
+class GamePanel extends JPanel implements KeyListener{
 	
 	GamePanel k;
 	number num = new number();
@@ -52,13 +53,20 @@ class GamePanel extends JPanel {
     ImageIcon img2;
     ImageIcon img3;
     ImageIcon img4;
+	BaseThread baseThread;
+	BulletThread bulletThread = null;
+    boolean direction; // true : Right , false : Left
+	boolean fired; // true : fired , false : not fired yet
     //AudioClip sound;
     GamePanel()
     {
         this.setLayout(null);
         base.setSize(40,40);
-        base.setOpaque(true);
-        base.setBackground(Color.black);
+		base.setOpaque(true);
+		base.setBackground(Color.BLACK);
+		base.setLocation(380, 520);
+        base.requestFocus();
+		base.addKeyListener(this);
         
         img = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\기본병사.png");
         img2 = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\고위직병사.png");
@@ -147,7 +155,7 @@ class GamePanel extends JPanel {
 
             @Override
             public void keyPressed(KeyEvent ke) {
-                if(ke.getKeyChar()==KeyEvent.VK_ENTER){
+                if(ke.getKeyChar()==KeyEvent.VK_SPACE){
                     //스레드가 죽어있는 상태인지 확인
                     if(bulletThread==null || !bulletThread.isAlive()){
                         //sound.play();
@@ -571,7 +579,8 @@ class GamePanel extends JPanel {
         public void run(){
             while(true){
                 if(hit()){//타겟이 맞았다면
-                    targetThread[attack].interrupt();//타겟 스레드를 죽인다.
+                    targetThread[attack].stop();//타겟 스레드를 죽인다.
+                    fired = false;
                     //총알은 원래 위치로 이동
                     startGame2();
                 
@@ -586,6 +595,7 @@ class GamePanel extends JPanel {
                     //총알이 프레임 밖으로 나갔을 때
                     if(y<0){
                         //총알 원래 위치로 이동
+                    	fired = false;
                         bullet.setLocation(bullet.getParent().getWidth()/2-5, bullet.getParent().getHeight()-50);
                         return;//총알 스레드를 죽인다.
                     }
@@ -640,6 +650,69 @@ class GamePanel extends JPanel {
         	}
     
     }
+    
+    ///////////////////////////////////////
+    public class BaseThread extends Thread // Base Thread Inner Class
+	{
+		JLabel base;
+		JLabel bullet;
+		public BaseThread(JLabel base, JLabel bullet)
+		{
+			this.base = base;
+			this.bullet = bullet;
+		}
+		public void run()
+		{
+			int x, y;
+			if(direction)
+			{
+				x = base.getX()+20;
+				y = base.getY();
+			}
+			else
+			{
+				x = base.getX()-20;
+				y = base.getY();
+			}
+			if(0<=x && x <=760)
+				base.setLocation(x, y);
+			
+			if(!fired)
+				bullet.setLocation(base.getX()+15,base.getY()-10);
+		}
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent e) {
+		
+		if(e.getKeyChar() == KeyEvent.VK_SPACE)
+		{
+			if(bulletThread == null || !bulletThread.isAlive())
+			{
+				bulletThread = new BulletThread(bullet,target,targetThread);
+				bulletThread.start();
+			}
+		}
+		if(e.getKeyCode() == KeyEvent.VK_LEFT)
+		{
+			direction = false;
+			baseThread = new BaseThread(base,bullet);
+			baseThread.start();
+		}
+		if(e.getKeyCode() == KeyEvent.VK_RIGHT)
+		{
+			direction = true;
+			baseThread = new BaseThread(base,bullet);
+			baseThread.start();
+		}
+	}
+	@Override
+	public void keyReleased(KeyEvent e) {}
+	@Override
+	public void keyTyped(KeyEvent e) {}
+	
+
+	/////////////////////
 }
     
 
