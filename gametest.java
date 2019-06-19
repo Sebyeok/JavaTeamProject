@@ -19,7 +19,7 @@ class number{
 
 class Ex5 extends JFrame{
     Ex5(){
-        this.setTitle("»ç°İ °ÔÀÓ");
+        this.setTitle("ì‚¬ê²© ê²Œì„");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         GamePanel p = new GamePanel();
@@ -37,11 +37,14 @@ class GamePanel extends JPanel implements KeyListener{
 	
 	GamePanel k;
 	number num = new number();
+	//TimeThread timethread = new TimeThread();
 	TargetThread[] targetThread = new TargetThread[num.enemy];
     TargetThread2 targetThread2;
     TargetThread3 targetThread3;
     TargetThread4 targetThread4;
     JLabel pointshow=new JLabel();
+    JLabel time=new JLabel();
+    JLabel gameover=new JLabel();
     JTextField ioField=new JTextField();
     JLabel base = new JLabel();
     JLabel bullet = new JLabel();
@@ -58,6 +61,7 @@ class GamePanel extends JPanel implements KeyListener{
     boolean direction; // true : Right , false : Left
 	boolean fired; // true : fired , false : not fired yet
     //AudioClip sound;
+
     GamePanel()
     {
         this.setLayout(null);
@@ -68,10 +72,10 @@ class GamePanel extends JPanel implements KeyListener{
         base.requestFocus();
 		base.addKeyListener(this);
         
-        img = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\±âº»º´»ç.png");
-        img2 = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\°íÀ§Á÷º´»ç.png");
-        img3 = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\ÇØ°ñ.png");
-        img4 = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\¹æ»ç´É.png");
+        img = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\ê¸°ë³¸ë³‘ì‚¬.png");
+        img2 = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\ê³ ìœ„ì§ë³‘ì‚¬.png");
+        img3 = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\í•´ê³¨.png");
+        img4 = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\ë°©ì‚¬ëŠ¥.png");
         for(int i=0;i<targetThread.length;i++)
         {
         	 target[i] = new JLabel(img);
@@ -83,10 +87,10 @@ class GamePanel extends JPanel implements KeyListener{
         target2 = new JLabel(img2);
         target3 = new JLabel(img3);
         target4 = new JLabel(img4);
-        //ÀÌ¹ÌÁö Å©±â¸¸Å­ ·¹ÀÌºí Å©±â ¼³Á¤
+        //ì´ë¯¸ì§€ í¬ê¸°ë§Œí¼ ë ˆì´ë¸” í¬ê¸° ì„¤ì •
         target2.setSize(img2.getIconWidth(),img2.getIconHeight());
       //  System.out.println(""+img2.getIconWidth()+"  "+img2.getIconHeight());
-        // È®ÀÎ°á°ú Å©±â 96 96
+        // í™•ì¸ê²°ê³¼ í¬ê¸° 96 96
         this.add(target2);
         
         target3.setSize(img3.getIconWidth(),img3.getIconHeight());
@@ -94,10 +98,14 @@ class GamePanel extends JPanel implements KeyListener{
         this.add(target3);
         
         target4.setSize(img4.getIconWidth(),img4.getIconHeight());
+       
+        
         pointshow.setSize(100,50);
+        time.setSize(100,50);
         //ioField.setSize(50,50);
         this.add(target4);
         this.add(pointshow);
+        this.add(time);
         //this.add(ioField);
         
       
@@ -109,6 +117,41 @@ class GamePanel extends JPanel implements KeyListener{
         
         //URL url = Ex5.class.getResource("LASER.wav");
         //sound = Applet.newAudioClip(url);
+        /////////////
+        class TimeThread extends Thread{
+    		
+    		int timelimit;
+    		public TimeThread(){
+    			timelimit=60;
+    		}
+    		public void run() {
+    			while(true) {
+    				
+    				try 
+    				{
+    					time.setText(Integer.toString(timelimit));
+    					sleep(1000);
+    					timelimit--;
+    					if(timelimit==-1);
+    					{
+    						break;
+    					}
+    				}
+    				catch (Exception e)
+    				{
+    					e.printStackTrace();
+    				}
+    			}
+    			 gameover.setSize(800,800);
+    		     gameover.setOpaque(true); //Opaqueê°’ì„ trueë¡œ ë¯¸ë¦¬ ì„¤ì •í•´ ì£¼ì–´ì•¼ ë°°ê²½ìƒ‰ì´ ì ìš©ëœë‹¤.
+    		     gameover.setForeground(Color.red);
+    		     add(gameover);
+    		}
+    		
+        }
+        TimeThread timethread = new TimeThread();
+        timethread.start();
+        /////////////
     }
     
     public void startGame(){
@@ -123,10 +166,13 @@ class GamePanel extends JPanel implements KeyListener{
         target3.setLocation(-96, -96);
         target4.setLocation(-96, -96);
         pointshow.setLocation(350,0);
+        time.setLocation(300,0);
         //ioField.setLocation(400,0);
-        //Å¸°ÙÀ» ¿òÁ÷ÀÌ´Â ½º·¹µå
+        //íƒ€ê²Ÿì„ ì›€ì§ì´ëŠ” ìŠ¤ë ˆë“œ
         
-        
+        //timethread.start();
+      
+        	
         for(int i=0;i<targetThread.length;i++)
         {
         	targetThread[i] = new TargetThread(target[i]);
@@ -134,7 +180,7 @@ class GamePanel extends JPanel implements KeyListener{
         }
         
         
-         targetThread2 = new TargetThread2(target2);
+        targetThread2 = new TargetThread2(target2);
     		//targetThread2.start();
     	
         targetThread3 = new TargetThread3(target3);
@@ -145,32 +191,19 @@ class GamePanel extends JPanel implements KeyListener{
     
         
         
-        //º£ÀÌ½º¿¡ ÃÊÁ¡À» µÎ°í ¿£ÅÍÅ° ÀÔ·Â¿¡ µû¶ó bullet½º·¹µå ½ÇÇà
+        //ë² ì´ìŠ¤ì— ì´ˆì ì„ ë‘ê³  ì—”í„°í‚¤ ì…ë ¥ì— ë”°ë¼ bulletìŠ¤ë ˆë“œ ì‹¤í–‰
         base.requestFocus();
-        base.addKeyListener(new KeyListener(){
-            BulletThread bulletThread = null;
-            @Override
-            public void keyTyped(KeyEvent ke) {
-            }
-
-            @Override
-            public void keyPressed(KeyEvent ke) {
-                if(ke.getKeyChar()==KeyEvent.VK_SPACE){
-                    //½º·¹µå°¡ Á×¾îÀÖ´Â »óÅÂÀÎÁö È®ÀÎ
-                    if(bulletThread==null || !bulletThread.isAlive()){
-                        //sound.play();
-                        //ÃÑ¾Ë·Î Å¸°ÙÀ» ¸ÂÃè´ÂÁö È®ÀÎÇÏ±â À§ÇØ 2°³ÀÇ ·¹ÀÌºí°ú Å¸°Ù½º·¹µå¸¦ ³Ñ°ÜÁØ´Ù.
-                        bulletThread = new BulletThread(bullet,target,targetThread);
-                        bulletThread.start();
-                    }
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent ke) {}
+        base.addKeyListener(this);
             
-        });
-    }
+                    
+                
+            }
+
+       
+            
+            
+      
+    
     /*public void startGame2(){
     	if(num.count==2)
         { targetThread2 = new TargetThread2(target2);
@@ -182,7 +215,37 @@ class GamePanel extends JPanel implements KeyListener{
         { targetThread4 = new TargetThread4(target4);
     		targetThread4.start();}
     }*/
-    
+   /* class TimeThread extends Thread{
+		
+		int timelimit;
+		public TimeThread(){
+			timelimit=60;
+		}
+		public void run() {
+			while(true) {
+				
+				try 
+				{
+					time.setText(Integer.toString(timelimit));
+					sleep(1000);
+					timelimit--;
+					if(timelimit==-1);
+					{
+						break;
+					}
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+			 gameover.setSize(800,800);
+		     gameover.setOpaque(true); //Opaqueê°’ì„ trueë¡œ ë¯¸ë¦¬ ì„¤ì •í•´ ì£¼ì–´ì•¼ ë°°ê²½ìƒ‰ì´ ì ìš©ëœë‹¤.
+		     gameover.setForeground(Color.red);
+		     add(gameover);
+		}
+		
+    }*/
     class TargetThread extends Thread{
         JLabel target;
         int d=20;
@@ -213,17 +276,17 @@ class GamePanel extends JPanel implements KeyListener{
             		else
             		{d=15;}
             	}
-                int x=target.getX()+a;//5ÇÈ¼¿¾¿ ÀÌµ¿
+                int x=target.getX()+a;//5í”½ì…€ì”© ì´ë™
                 int y=target.getY();
                 if(num.count>=2)
                 {y=target.getY()+b;}                
-                //ÇÁ·¹ÀÓ ¹ÛÀ¸·Î ³ª°¥°æ¿ì
+                //í”„ë ˆì„ ë°–ìœ¼ë¡œ ë‚˜ê°ˆê²½ìš°
                 if(x>GamePanel.this.getWidth())
                 	{
                 	a=-5;
                     target.setLocation(GamePanel.this.getWidth(), y);
                     }
-                //ÇÁ·¹ÀÓ ¾È¿¡ ÀÖÀ»°æ¿ì 5ÇÈ¼¿¾¿ ÀÌµ¿
+                //í”„ë ˆì„ ì•ˆì— ìˆì„ê²½ìš° 5í”½ì…€ì”© ì´ë™
                 else
                     target.setLocation(x, y);
                 
@@ -240,7 +303,7 @@ class GamePanel extends JPanel implements KeyListener{
             	b=-5;
                 target.setLocation(x, 600);
                 }
-            //ÇÁ·¹ÀÓ ¾È¿¡ ÀÖÀ»°æ¿ì 5ÇÈ¼¿¾¿ ÀÌµ¿
+            //í”„ë ˆì„ ì•ˆì— ìˆì„ê²½ìš° 5í”½ì…€ì”© ì´ë™
             else
                 target.setLocation(x, y);
             
@@ -253,16 +316,16 @@ class GamePanel extends JPanel implements KeyListener{
             
             
 ////////////////////////////////////////////////////////////////////////////////////
-                //0.02ÃÊ¸¶´Ù ÀÌµ¿
+                //0.02ì´ˆë§ˆë‹¤ ì´ë™
                 try{
                     sleep(d);
                 }
-                //½º·¹µå°¡ Á×°ÔµÇ¸é ÃÊ±â À§Ä¡¿¡ À§Ä¡ÇÏ°í, 0.5ÃÊ¸¦ ±â´Ù¸°´Ù.
+                //ìŠ¤ë ˆë“œê°€ ì£½ê²Œë˜ë©´ ì´ˆê¸° ìœ„ì¹˜ì— ìœ„ì¹˜í•˜ê³ , 0.5ì´ˆë¥¼ ê¸°ë‹¤ë¦°ë‹¤.
                 catch(Exception e){
                     target.setLocation(5, y);
                     num.point++;
                 	num.count++;
-                    pointshow.setText("Á¡¼ö:"+num.point);
+                    pointshow.setText("ì ìˆ˜:"+num.point);
                     try{
                         sleep(500);
                     }
@@ -309,17 +372,17 @@ class GamePanel extends JPanel implements KeyListener{
             		else
             		{d=10;}
             	}
-                int x=target.getX()+a;//5ÇÈ¼¿¾¿ ÀÌµ¿
+                int x=target.getX()+a;//5í”½ì…€ì”© ì´ë™
                 int y=target.getY();
                 if(num.count>=2)
                 {y=target.getY()+b;}                
-                //ÇÁ·¹ÀÓ ¹ÛÀ¸·Î ³ª°¥°æ¿ì
+                //í”„ë ˆì„ ë°–ìœ¼ë¡œ ë‚˜ê°ˆê²½ìš°
                 if(x>GamePanel.this.getWidth())
                 	{
                 	a=-5;
                     target.setLocation(GamePanel.this.getWidth(), y);
                     }
-                //ÇÁ·¹ÀÓ ¾È¿¡ ÀÖÀ»°æ¿ì 5ÇÈ¼¿¾¿ ÀÌµ¿
+                //í”„ë ˆì„ ì•ˆì— ìˆì„ê²½ìš° 5í”½ì…€ì”© ì´ë™
                 else
                     target.setLocation(x, y);
                 
@@ -336,7 +399,7 @@ class GamePanel extends JPanel implements KeyListener{
             	b=-5;
                 target.setLocation(x, 600);
                 }
-            //ÇÁ·¹ÀÓ ¾È¿¡ ÀÖÀ»°æ¿ì 5ÇÈ¼¿¾¿ ÀÌµ¿
+            //í”„ë ˆì„ ì•ˆì— ìˆì„ê²½ìš° 5í”½ì…€ì”© ì´ë™
             else
                 target.setLocation(x, y);
             
@@ -349,16 +412,16 @@ class GamePanel extends JPanel implements KeyListener{
             
             
 ////////////////////////////////////////////////////////////////////////////////////
-                //0.02ÃÊ¸¶´Ù ÀÌµ¿
+                //0.02ì´ˆë§ˆë‹¤ ì´ë™
                 try{
                     sleep(d);
                 }
-                //½º·¹µå°¡ Á×°ÔµÇ¸é ÃÊ±â À§Ä¡¿¡ À§Ä¡ÇÏ°í, 0.5ÃÊ¸¦ ±â´Ù¸°´Ù.
+                //ìŠ¤ë ˆë“œê°€ ì£½ê²Œë˜ë©´ ì´ˆê¸° ìœ„ì¹˜ì— ìœ„ì¹˜í•˜ê³ , 0.5ì´ˆë¥¼ ê¸°ë‹¤ë¦°ë‹¤.
                 catch(Exception e){
                     target.setLocation(5, y);
                     num.point+=5;
                 	num.count++;
-                    pointshow.setText("Á¡¼ö:"+num.point);
+                    pointshow.setText("ì ìˆ˜:"+num.point);
                     try{
                         sleep(500);
                     }
@@ -400,17 +463,17 @@ class GamePanel extends JPanel implements KeyListener{
             		else
             		{d=10;}
             	}*/
-                int x=target.getX()+a;//5ÇÈ¼¿¾¿ ÀÌµ¿
+                int x=target.getX()+a;//5í”½ì…€ì”© ì´ë™
                 int y=target.getY();
                 if(num.count>=2)
                 {y=target.getY()+b;}                
-                //ÇÁ·¹ÀÓ ¹ÛÀ¸·Î ³ª°¥°æ¿ì
+                //í”„ë ˆì„ ë°–ìœ¼ë¡œ ë‚˜ê°ˆê²½ìš°
                 if(x>GamePanel.this.getWidth())
                 	{
                 	a=-a;
                     target.setLocation(GamePanel.this.getWidth(), y);
                     }
-                //ÇÁ·¹ÀÓ ¾È¿¡ ÀÖÀ»°æ¿ì 5ÇÈ¼¿¾¿ ÀÌµ¿
+                //í”„ë ˆì„ ì•ˆì— ìˆì„ê²½ìš° 5í”½ì…€ì”© ì´ë™
                 else
                     target.setLocation(x, y);
                 
@@ -427,7 +490,7 @@ class GamePanel extends JPanel implements KeyListener{
             	b=-b;
                 target.setLocation(x, 600);
                 }
-            //ÇÁ·¹ÀÓ ¾È¿¡ ÀÖÀ»°æ¿ì 5ÇÈ¼¿¾¿ ÀÌµ¿
+            //í”„ë ˆì„ ì•ˆì— ìˆì„ê²½ìš° 5í”½ì…€ì”© ì´ë™
             else
                 target.setLocation(x, y);
             
@@ -440,16 +503,16 @@ class GamePanel extends JPanel implements KeyListener{
             
             
 ////////////////////////////////////////////////////////////////////////////////////
-                //0.02ÃÊ¸¶´Ù ÀÌµ¿
+                //0.02ì´ˆë§ˆë‹¤ ì´ë™
                 try{
                     sleep(d);
                 }
-                //½º·¹µå°¡ Á×°ÔµÇ¸é ÃÊ±â À§Ä¡¿¡ À§Ä¡ÇÏ°í, 0.5ÃÊ¸¦ ±â´Ù¸°´Ù.
+                //ìŠ¤ë ˆë“œê°€ ì£½ê²Œë˜ë©´ ì´ˆê¸° ìœ„ì¹˜ì— ìœ„ì¹˜í•˜ê³ , 0.5ì´ˆë¥¼ ê¸°ë‹¤ë¦°ë‹¤.
                 catch(Exception e){
                     target.setLocation(5, y);
                     num.point+=100;
                 	num.count++;
-                    pointshow.setText("Á¡¼ö:"+num.point);
+                    pointshow.setText("ì ìˆ˜:"+num.point);
                     try{
                         sleep(500);
                     }
@@ -489,17 +552,17 @@ class GamePanel extends JPanel implements KeyListener{
             		else
             		{d=10;}
             	}*/
-                int x=target.getX()+a;//5ÇÈ¼¿¾¿ ÀÌµ¿
+                int x=target.getX()+a;//5í”½ì…€ì”© ì´ë™
                 int y=target.getY();
                 if(num.count>=2)
                 {y=target.getY()+b;}                
-                //ÇÁ·¹ÀÓ ¹ÛÀ¸·Î ³ª°¥°æ¿ì
+                //í”„ë ˆì„ ë°–ìœ¼ë¡œ ë‚˜ê°ˆê²½ìš°
                 if(x>GamePanel.this.getWidth())
                 	{
                 	a=-5;
                     target.setLocation(GamePanel.this.getWidth(), y);
                     }
-                //ÇÁ·¹ÀÓ ¾È¿¡ ÀÖÀ»°æ¿ì 5ÇÈ¼¿¾¿ ÀÌµ¿
+                //í”„ë ˆì„ ì•ˆì— ìˆì„ê²½ìš° 5í”½ì…€ì”© ì´ë™
                 else
                     target.setLocation(x, y);
                 
@@ -516,7 +579,7 @@ class GamePanel extends JPanel implements KeyListener{
             	b=-5;
                 target.setLocation(x, 600);
                 }
-            //ÇÁ·¹ÀÓ ¾È¿¡ ÀÖÀ»°æ¿ì 5ÇÈ¼¿¾¿ ÀÌµ¿
+            //í”„ë ˆì„ ì•ˆì— ìˆì„ê²½ìš° 5í”½ì…€ì”© ì´ë™
             else
                 target.setLocation(x, y);
             
@@ -529,16 +592,16 @@ class GamePanel extends JPanel implements KeyListener{
             
             
 ////////////////////////////////////////////////////////////////////////////////////
-                //0.02ÃÊ¸¶´Ù ÀÌµ¿
+                //0.02ì´ˆë§ˆë‹¤ ì´ë™
                 try{
                     sleep(d);
                 }
-                //½º·¹µå°¡ Á×°ÔµÇ¸é ÃÊ±â À§Ä¡¿¡ À§Ä¡ÇÏ°í, 0.5ÃÊ¸¦ ±â´Ù¸°´Ù.
+                //ìŠ¤ë ˆë“œê°€ ì£½ê²Œë˜ë©´ ì´ˆê¸° ìœ„ì¹˜ì— ìœ„ì¹˜í•˜ê³ , 0.5ì´ˆë¥¼ ê¸°ë‹¤ë¦°ë‹¤.
                 catch(Exception e){
                     target.setLocation(5, y);
                     num.point-=10;
                 	num.count++;
-                    pointshow.setText("Á¡¼ö:"+num.point);
+                    pointshow.setText("ì ìˆ˜:"+num.point);
                     try{
                         sleep(500);
                     }
@@ -548,7 +611,7 @@ class GamePanel extends JPanel implements KeyListener{
         }
     }
 
-    class BulletThread extends Thread {
+    public class BulletThread extends Thread {
         JLabel bullet;
         JLabel[] target= new JLabel[num.enemy];
         Thread[] targetThread= new Thread[num.enemy];
@@ -577,33 +640,35 @@ class GamePanel extends JPanel implements KeyListener{
             {targetThread4.start();}
         }
         public void run(){
+        	fired = true;
             while(true){
-                if(hit()){//Å¸°ÙÀÌ ¸Â¾Ò´Ù¸é
-                    targetThread[attack].stop();//Å¸°Ù ½º·¹µå¸¦ Á×ÀÎ´Ù.
+                if(hit()){//íƒ€ê²Ÿì´ ë§ì•˜ë‹¤ë©´
+                    targetThread[attack].interrupt();//íƒ€ê²Ÿ ìŠ¤ë ˆë“œë¥¼ ì£½ì¸ë‹¤.
                     fired = false;
-                    //ÃÑ¾ËÀº ¿ø·¡ À§Ä¡·Î ÀÌµ¿
+                    targetThread[attack].interrupt();//íƒ€ê²Ÿ ìŠ¤ë ˆë“œë¥¼ ì£½ì¸ë‹¤.
+                    //ì´ì•Œì€ ì›ë˜ ìœ„ì¹˜ë¡œ ì´ë™
                     startGame2();
                 
-                    //ioField.setText("Á¡¼ö:"+num.point);
-                    bullet.setLocation(bullet.getParent().getWidth()/2-5, bullet.getParent().getHeight()-50);
+                    //ioField.setText("ì ìˆ˜:"+num.point);
+                    bullet.setLocation(base.getX()+15,base.getY()-10);
                   
-                    return;//ÃÑ¾Ë ½º·¹µåµµ Á×ÀÎ´Ù.
+                    return;//ì´ì•Œ ìŠ¤ë ˆë“œë„ ì£½ì¸ë‹¤.
                 }
                 else{
                     int x=bullet.getX();
-                    int y=bullet.getY()-5;//5ÇÈ¼¿¾¿ À§·Î ÀÌµ¿ÇÑ´Ù.=ÃÑ¾Ë ¼Óµµ°¡ 5ÇÈ¼¿
-                    //ÃÑ¾ËÀÌ ÇÁ·¹ÀÓ ¹ÛÀ¸·Î ³ª°¬À» ¶§
+                    int y=bullet.getY()-5;//5í”½ì…€ì”© ìœ„ë¡œ ì´ë™í•œë‹¤.=ì´ì•Œ ì†ë„ê°€ 5í”½ì…€
+                    //ì´ì•Œì´ í”„ë ˆì„ ë°–ìœ¼ë¡œ ë‚˜ê°”ì„ ë•Œ
                     if(y<0){
-                        //ÃÑ¾Ë ¿ø·¡ À§Ä¡·Î ÀÌµ¿
+                        //ì´ì•Œ ì›ë˜ ìœ„ì¹˜ë¡œ ì´ë™
                     	fired = false;
-                        bullet.setLocation(bullet.getParent().getWidth()/2-5, bullet.getParent().getHeight()-50);
-                        return;//ÃÑ¾Ë ½º·¹µå¸¦ Á×ÀÎ´Ù.
+                    	bullet.setLocation(base.getX()+15,base.getY()-10);
+                        return;//ì´ì•Œ ìŠ¤ë ˆë“œë¥¼ ì£½ì¸ë‹¤.
                     }
-                    //ÃÑ¾ËÀÌ ÇÁ·¹ÀÓ ¾È¿¡ ÀÖÀ¸¸é 5ÇÈ¼¿¾¿ ÀÌµ¿ÇÑ´Ù.
+                    //ì´ì•Œì´ í”„ë ˆì„ ì•ˆì— ìˆìœ¼ë©´ 5í”½ì…€ì”© ì´ë™í•œë‹¤.
                     else
-                        bullet.setLocation(x, y);
+                    	bullet.setLocation(x,y);
                 }
-                //0.02ÃÊ¸¶´Ù 5ÇÈ¼¿¾¿ ÀÌµ¿
+                //0.02ì´ˆë§ˆë‹¤ 5í”½ì…€ì”© ì´ë™
                 try{
                     sleep(20);
                 }
@@ -612,7 +677,8 @@ class GamePanel extends JPanel implements KeyListener{
             }
         }
         
-        private boolean hit(){
+        private boolean hit()
+        {
             int x=bullet.getX();
             int y=bullet.getY();
             int w=bullet.getWidth();
@@ -629,11 +695,11 @@ class GamePanel extends JPanel implements KeyListener{
         
         
         private boolean targetContains(int x, int y){
-            //Å¸°ÙÀÇ xÁÂÇ¥°¡ ÃÑ¾Ë xÁÂÇ¥º¸´Ù ÀÛ°Å³ª °°À¸¸ç ÃÑ¾Ë xÁÂÇ¥º¸´Ù Å¸°Ù xÁÂÇ¥ + Å¸°ÙÀÇ °¡·Î ±æÀÌ°¡ Å©°í
+            //íƒ€ê²Ÿì˜ xì¢Œí‘œê°€ ì´ì•Œ xì¢Œí‘œë³´ë‹¤ ì‘ê±°ë‚˜ ê°™ìœ¼ë©° ì´ì•Œ xì¢Œí‘œë³´ë‹¤ íƒ€ê²Ÿ xì¢Œí‘œ + íƒ€ê²Ÿì˜ ê°€ë¡œ ê¸¸ì´ê°€ í¬ê³ 
         	for(int i=0;i<num.enemy;i++)
         	{
             if(((target[i].getX()<=x)&&(x<target[i].getX()+target[i].getWidth()))   
-                    //Å¸°ÙÀÇ yÁÂÇ¥°¡ ÃÑ¾Ë yÁÂÇ¥º¸´Ù ÀÛ°Å³ª °°À¸¸ç ÃÑ¾Ë yÁÂÇ¥º¸´Ù Å¸°Ù yÁÂÇ¥ + Å¸°ÙÀÇ ¼¼·Î ±æÀÌ°¡ Å©¸é
+                    //íƒ€ê²Ÿì˜ yì¢Œí‘œê°€ ì´ì•Œ yì¢Œí‘œë³´ë‹¤ ì‘ê±°ë‚˜ ê°™ìœ¼ë©° ì´ì•Œ yì¢Œí‘œë³´ë‹¤ íƒ€ê²Ÿ yì¢Œí‘œ + íƒ€ê²Ÿì˜ ì„¸ë¡œ ê¸¸ì´ê°€ í¬ë©´
                     &&((target[i].getY()<=y)&&(y<target[i].getY()+target[i].getHeight())))
             {
             	
@@ -726,7 +792,7 @@ class GamePanel extends JPanel implements KeyListener{
             
             	
             	 Scanner scan = new Scanner(System.in); 
-            	 System.out.println("ÀûÀÇ ¼ıÀÚ¸¦ ÀÔ·ÂÇØÁÖ½Ã¿ä");
+            	 System.out.println("ì ì˜ ìˆ«ìë¥¼ ì…ë ¥í•´ì£¼ì‹œìš”");
             	 int num = scan.nextInt(); 
             	 enemy = num;
                 new Ex5();
