@@ -1,14 +1,9 @@
-package javaapplication30;
-
 import java.util.Scanner;
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
-
-import javaapplication30.Shoot_Game.BaseThread;
-import javaapplication30.Shoot_Game.BulletThread;
 
 import java.net.*;
 
@@ -37,7 +32,7 @@ class GamePanel extends JPanel implements KeyListener{
 	
 	GamePanel k;
 	number num = new number();
-	//TimeThread timethread = new TimeThread();
+	TimeThread timethread = new TimeThread();
 	TargetThread[] targetThread = new TargetThread[num.enemy];
     TargetThread2 targetThread2;
     TargetThread3 targetThread3;
@@ -72,10 +67,10 @@ class GamePanel extends JPanel implements KeyListener{
         base.requestFocus();
 		base.addKeyListener(this);
         
-        img = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\기본병사.png");
-        img2 = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\고위직병사.png");
-        img3 = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\해골.png");
-        img4 = new ImageIcon("C:\\Users\\ekc14\\eclipse-workspace\\java project\\src\\javaapplication30\\방사능.png");
+        img = new ImageIcon("./기본병사.png");
+        img2 = new ImageIcon("./고위직병사.png");
+        img3 = new ImageIcon("./해골.png");
+        img4 = new ImageIcon("./사능.png");
         for(int i=0;i<targetThread.length;i++)
         {
         	 target[i] = new JLabel(img);
@@ -114,43 +109,12 @@ class GamePanel extends JPanel implements KeyListener{
         bullet.setBackground(Color.red);
         this.add(base);
         this.add(bullet);
+        this.add(gameover);
         
         //URL url = Ex5.class.getResource("LASER.wav");
         //sound = Applet.newAudioClip(url);
         /////////////
-        class TimeThread extends Thread{
-    		
-    		int timelimit;
-    		public TimeThread(){
-    			timelimit=60;
-    		}
-    		public void run() {
-    			while(true) {
-    				
-    				try 
-    				{
-    					time.setText(Integer.toString(timelimit));
-    					sleep(1000);
-    					timelimit--;
-    					if(timelimit==-1);
-    					{
-    						break;
-    					}
-    				}
-    				catch (Exception e)
-    				{
-    					e.printStackTrace();
-    				}
-    			}
-    			 gameover.setSize(800,800);
-    		     gameover.setOpaque(true); //Opaque값을 true로 미리 설정해 주어야 배경색이 적용된다.
-    		     gameover.setForeground(Color.red);
-    		     add(gameover);
-    		}
-    		
-        }
-        TimeThread timethread = new TimeThread();
-        timethread.start();
+        
         /////////////
     }
     
@@ -170,7 +134,7 @@ class GamePanel extends JPanel implements KeyListener{
         //ioField.setLocation(400,0);
         //타겟을 움직이는 스레드
         
-        //timethread.start();
+        timethread.start();
       
         	
         for(int i=0;i<targetThread.length;i++)
@@ -215,11 +179,11 @@ class GamePanel extends JPanel implements KeyListener{
         { targetThread4 = new TargetThread4(target4);
     		targetThread4.start();}
     }*/
-   /* class TimeThread extends Thread{
+   class TimeThread extends Thread{
 		
 		int timelimit;
 		public TimeThread(){
-			timelimit=60;
+			timelimit=1;
 		}
 		public void run() {
 			while(true) {
@@ -229,7 +193,7 @@ class GamePanel extends JPanel implements KeyListener{
 					time.setText(Integer.toString(timelimit));
 					sleep(1000);
 					timelimit--;
-					if(timelimit==-1);
+					if(timelimit==-1)
 					{
 						break;
 					}
@@ -239,13 +203,27 @@ class GamePanel extends JPanel implements KeyListener{
 					e.printStackTrace();
 				}
 			}
+			 KillThread();
 			 gameover.setSize(800,800);
 		     gameover.setOpaque(true); //Opaque값을 true로 미리 설정해 주어야 배경색이 적용된다.
 		     gameover.setForeground(Color.red);
-		     add(gameover);
+		     gameover.setText("Game Over");
+		     gameover.setHorizontalAlignment(JLabel.CENTER);
+		     gameover.setVisible(true);
+		    
 		}
 		
-    }*/
+    }
+   void KillThread()
+   {
+	   for(int i=0;i<num.enemy;i++)
+		   targetThread[i].stop();
+	   targetThread2.stop();
+	   targetThread3.stop();
+	   targetThread4.stop();
+	  // bulletThread.stop();
+	  // baseThread.stop();
+   }
     class TargetThread extends Thread{
         JLabel target;
         int d=20;
@@ -790,18 +768,12 @@ class GamePanel extends JPanel implements KeyListener{
             public static void main(String[] args) {
             	
             
-            	
-            	 Scanner scan = new Scanner(System.in); 
-            	 System.out.println("적의 숫자를 입력해주시요");
-            	 int num = scan.nextInt(); 
-            	 enemy = num;
+            	 enemy = 4;
                 new Ex5();
             }
         }
             
 
   
-
-
 
 
